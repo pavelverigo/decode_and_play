@@ -29,7 +29,7 @@ int win_xaudio2_init() {
     return 0;
 }
 
-int win_xaudio2_play_pcm(WORD channel_cnt, DWORD sample_rate, BYTE *data_ptr, DWORD data_size) {
+int win_xaudio2_play_pcm(WORD channel_cnt, DWORD sample_rate, DWORD avg_bytes_per_sec, WORD block_align, WORD bits_per_sample, BYTE *data_ptr, DWORD data_size) {
     IXAudio2SourceVoice* pSourceVoice;
     WAVEFORMATEX wf = {0};
     XAUDIO2_BUFFER buffer = {0};
@@ -37,9 +37,9 @@ int win_xaudio2_play_pcm(WORD channel_cnt, DWORD sample_rate, BYTE *data_ptr, DW
     wf.wFormatTag = WAVE_FORMAT_PCM;
     wf.nChannels = channel_cnt;
     wf.nSamplesPerSec = sample_rate;
-    wf.wBitsPerSample = 16;
-    wf.nBlockAlign = (wf.nChannels * (wf.wBitsPerSample/8));
-    wf.nAvgBytesPerSec = wf.nBlockAlign * wf.nSamplesPerSec;
+    wf.nAvgBytesPerSec = avg_bytes_per_sec;
+    wf.nBlockAlign = block_align;
+    wf.wBitsPerSample = bits_per_sample;
 
     HRESULT hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &wf);
     if (FAILED(hr)) {
